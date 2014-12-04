@@ -6,148 +6,176 @@ import (
 )
 
 // Bool is a bool that implements Parser
-type Bool bool
+type Bool struct {
+	Data *bool
+}
 
 // Parse is an implementation of Parser
-func (b *Bool) Parse(d []string) error {
+func (b Bool) Parse(d []string) error {
 	switch strings.ToLower(d[0]) {
 	case "on", "yes", "y":
-		*b = true
+		*b.Data = true
 	case "off", "no", "n":
-		*b = false
+		*b.Data = false
 	default:
 		c, err := strconv.ParseBool(d[0])
-		*b = Bool(c)
+		*b.Data = c
 		return err
 	}
 	return nil
 }
 
 // Int is an int that implements Parser
-type Int int
+type Int struct {
+	Data *int
+}
 
 // Parse is an implementation of Parser
-func (i *Int) Parse(d []string) error {
+func (i Int) Parse(d []string) error {
 	n, err := strconv.ParseInt(d[0], 10, 0)
-	*i = Int(n)
+	*i.Data = int(n)
 	return err
 }
 
 // Int8 is an int8 that implements Parser
-type Int8 int8
+type Int8 struct {
+	Data *int8
+}
 
 // Parse is an implementation of Parser
-func (i *Int8) Parse(d []string) error {
+func (i Int8) Parse(d []string) error {
 	n, err := strconv.ParseInt(d[0], 10, 8)
-	*i = Int8(n)
+	*i.Data = int8(n)
 	return err
 }
 
 // Int16 is an int16 that implements Parser
-type Int16 int16
+type Int16 struct {
+	Data *int16
+}
 
 // Parse is an implementation of Parser
-func (i *Int16) Parse(d []string) error {
+func (i Int16) Parse(d []string) error {
 	n, err := strconv.ParseInt(d[0], 10, 16)
-	*i = Int16(n)
+	*i.Data = int16(n)
 	return err
 }
 
 // Int32 is an int32 that implements Parser
-type Int32 int32
+type Int32 struct {
+	Data *int32
+}
 
 // Parse is an implementation of Parser
-func (i *Int32) Parse(d []string) error {
+func (i Int32) Parse(d []string) error {
 	n, err := strconv.ParseInt(d[0], 10, 32)
-	*i = Int32(n)
+	*i.Data = int32(n)
 	return err
 }
 
 // Int64 is an int64 that implements Parser
-type Int64 int64
+type Int64 struct {
+	Data *int64
+}
 
 // Parse is an implementation of Parser
-func (i *Int64) Parse(d []string) error {
+func (i Int64) Parse(d []string) error {
 	n, err := strconv.ParseInt(d[0], 10, 64)
-	*i = Int64(n)
+	*i.Data = n
 	return err
 }
 
 // Uint is a uint that implements Parser
-type Uint uint
+type Uint struct {
+	Data *uint
+}
 
 // Parse is an implementation of Parser
 func (u *Uint) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 0)
-	*u = Uint(n)
+	*u.Data = uint(n)
 	return err
 }
 
 // Uint8 is a uint8 that implements Parser
-type Uint8 uint8
+type Uint8 struct {
+	Data *uint8
+}
 
 // Parse is an implementation of Parser
 func (u *Uint8) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 8)
-	*u = Uint8(n)
+	*u.Data = uint8(n)
 	return err
 }
 
 // Uint16 is a uint16 that implements Parser
-type Uint16 uint16
+type Uint16 struct {
+	Data *uint16
+}
 
 // Parse is an implementation of Parser
-func (u *Uint16) Parse(d []string) error {
+func (u Uint16) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 16)
-	*u = Uint16(n)
+	*u.Data = uint16(n)
 	return err
 }
 
 // Uint32 is a uint32 that implements Parser
-type Uint32 uint32
+type Uint32 struct {
+	Data *uint32
+}
 
 // Parse is an implementation of Parser
-func (u *Uint32) Parse(d []string) error {
+func (u Uint32) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 32)
-	*u = Uint32(n)
+	*u.Data = uint32(n)
 	return err
 }
 
 // Uint64 is a uint64 that implements Parser
-type Uint64 uint64
+type Uint64 struct {
+	Data *uint64
+}
 
 // Parse is an implementation of Parser
-func (u *Uint64) Parse(d []string) error {
+func (u Uint64) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 64)
-	*u = Uint64(n)
+	*u.Data = n
 	return err
 }
 
 // Float32 is a float32 that implements Parser
-type Float32 float32
+type Float32 struct {
+	Data *float32
+}
 
 // Parse is an implementation of Parser
-func (f *Float32) Parse(d []string) error {
+func (f Float32) Parse(d []string) error {
 	n, err := strconv.ParseFloat(d[0], 32)
-	*f = Float32(n)
+	*f.Data = float32(n)
 	return err
 }
 
 // Float64 is a float64 that implements Parser
-type Float64 float64
+type Float64 struct {
+	Data *float64
+}
 
 // Parse is an implementation of Parser
-func (f *Float64) Parse(d []string) error {
+func (f Float64) Parse(d []string) error {
 	n, err := strconv.ParseFloat(d[0], 64)
-	*f = Float64(n)
+	*f.Data = n
 	return err
 }
 
 // String is a string that implements Parser
-type String string
+type String struct {
+	Data *string
+}
 
 // Parse is an implementation of Parser
-func (s *String) Parse(d []string) error {
-	*s = String(d[0])
+func (s String) Parse(d []string) error {
+	*s.Data = d[0]
 	return nil
 }

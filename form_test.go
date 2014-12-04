@@ -1,9 +1,10 @@
 package form
 
 import (
-	"github.com/MJKWoolnough/equaler"
 	"net/url"
 	"testing"
+
+	"github.com/MJKWoolnough/equaler"
 )
 
 func TestParse(t *testing.T) {
@@ -13,11 +14,11 @@ func TestParse(t *testing.T) {
 	}{
 		{
 			ParserList{
-				"testA": new(Int8),
-				"testB": new(Int8),
-				"testC": new(Int8),
-				"testD": new(Uint16),
-				"testE": new(Float32),
+				"testA": newInt8(0),
+				"testB": newInt8(0),
+				"testC": newInt8(0),
+				"testD": newUint16(0),
+				"testE": newFloat32(0),
 			},
 			ParserList{
 				"testA": newInt8(1),
@@ -45,35 +46,35 @@ func TestParse(t *testing.T) {
 	}
 }
 
-func newInt8(v Int8) *Int8 {
-	return &v
+func newInt8(v int8) Int8 {
+	return Int8{&v}
 }
 
-func newUint16(v Uint16) *Uint16 {
-	return &v
+func newUint16(v uint16) Uint16 {
+	return Uint16{&v}
 }
 
-func newFloat32(v Float32) *Float32 {
-	return &v
+func newFloat32(v float32) Float32 {
+	return Float32{&v}
 }
 
-func (i *Int8) Equal(e equaler.Equaler) bool {
-	if d, ok := e.(*Int8); ok {
-		return *d == *i
+func (i Int8) Equal(e equaler.Equaler) bool {
+	if d, ok := e.(Int8); ok {
+		return *d.Data == *i.Data
 	}
 	return false
 }
 
-func (u *Uint16) Equal(e equaler.Equaler) bool {
-	if d, ok := e.(*Uint16); ok {
-		return *d == *u
+func (u Uint16) Equal(e equaler.Equaler) bool {
+	if d, ok := e.(Uint16); ok {
+		return *d.Data == *u.Data
 	}
 	return false
 }
 
-func (f *Float32) Equal(e equaler.Equaler) bool {
-	if d, ok := e.(*Float32); ok {
-		return *d == *f
+func (f Float32) Equal(e equaler.Equaler) bool {
+	if d, ok := e.(Float32); ok {
+		return *d.Data == *f.Data
 	}
 	return false
 }
