@@ -3,6 +3,7 @@ package form
 import (
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Bool is a bool that implements Parser
@@ -178,4 +179,97 @@ type String struct {
 func (s String) Parse(d []string) error {
 	*s.Data = d[0]
 	return nil
+}
+
+var formats = [...]string{
+	time.ANSIC,
+	time.Kitchen,
+	time.RFC1123,
+	time.RFC1123Z,
+	time.RFC3339,
+	time.RFC3339Nano,
+	time.RFC822,
+	time.RFC822Z,
+	time.RFC850,
+	time.RubyDate,
+	time.Stamp,
+	time.StampNano,
+	time.StampMicro,
+	time.StampMilli,
+	time.UnixDate,
+	"2/1/06 15:04:05",
+	"2/1/2006 15:04:05",
+	"02/01/06 15:04:05",
+	"02/01/2006 15:04:05",
+	"2/1/06 15:04",
+	"2/1/2006 15:04",
+	"02/01/06 15:04",
+	"02/01/2006 15:04",
+	"15:04:05 2/1/06",
+	"15:04:05 2/1/2006",
+	"15:04:05 02/01/06",
+	"15:04:05 02/01/2006",
+	"15:04 2/1/06",
+	"15:04 2/1/2006",
+	"15:04 02/01/06",
+	"15:04 02/01/2006",
+	"2-1-06 15:04:05",
+	"2-1-2006 15:04:05",
+	"02-01-06 15:04:05",
+	"02-01-2006 15:04:05",
+	"2-1-06 15:04",
+	"2-1-2006 15:04",
+	"02-01-06 15:04",
+	"02-01-2006 15:04",
+	"15:04:05 2-1-06",
+	"15:04:05 2-1-2006",
+	"15:04:05 02-01-06",
+	"15:04:05 02-01-2006",
+	"15:04 2-1-06",
+	"15:04 2-1-2006",
+	"15:04 02-01-06",
+	"15:04 02-01-2006",
+}
+
+// Time is a time.Time that implements Parser
+type Time struct {
+	Data *time.Time
+}
+
+// Parse is an implementation of Parser
+func (t Time) Parse(d []string) error {
+	for _, format := range formats {
+		pt, err := time.Parse(format, d[0])
+		if err == nil {
+			*t.Data = pt
+			return nil
+		}
+	}
+	return UnknownFormat(d[0])
+}
+
+// TimeFormat is like a Time except that it allows a specific format to be
+// specified
+type TimeFormat struct {
+	Data   *time.Time
+	Format string
+}
+
+// Parse is an implementation of Parser
+func (t TimeFormat) Parse(d []string) error {
+	pt, err := time.Parse(t.Format, d[0])
+	if err != nil {
+		*t.Data = pt
+	}
+	return err
+}
+
+// Errors
+
+// UnknownFormat is an error return from Time.Parse when it cannot determine
+// the time format of the given string
+type UnknownFormat string
+
+func (UnknownFormat) Error() string {
+	return "unknown time format"
 }
