@@ -4,18 +4,23 @@ import (
 	"net/url"
 )
 
+// Errors is an error type that is a map of other errors
 type Errors map[string]error
 
 func (Errors) Error() string {
 	return "errors encountered"
 }
 
+// Parser is an interface used to to parse a specfic type
 type Parser interface {
 	Parse([]string) error
 }
 
+// ParserList is a simple implementation of a parserLister that simple returns
+// itself
 type ParserList map[string]Parser
 
+// ParserList is an implementation of parserLister
 func (p ParserList) ParserList() ParserList {
 	return p
 }
@@ -24,10 +29,12 @@ type parserLister interface {
 	ParserList() ParserList
 }
 
+// ParseValue parses a single values
 func ParseValue(name string, value Parser, data url.Values) error {
 	return Parse(ParserList{name: value}, data)
 }
 
+// Parse parses the given url.Values into the type given
 func Parse(p parserLister, data url.Values) error {
 	errs := make(Errors)
 	for k, v := range p.ParserList() {
