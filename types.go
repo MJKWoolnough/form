@@ -1,6 +1,7 @@
 package form
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -86,6 +87,25 @@ func (i Int64) Parse(d []string) error {
 	return err
 }
 
+// IntBetween is an implementation of Parser that allows a signed integer
+// between the Min and Max (inclusively)
+type IntBetween struct {
+	Parser
+	Min, Max int64
+}
+
+// Parse is an implementation of Parser
+func (i IntBetween) Parse(d []string) error {
+	n, err := strconv.ParseInt(d[0], 10, 64)
+	if err != nil {
+		return err
+	}
+	if n >= i.Min && n <= i.Max {
+		return i.Parser.Parse(d)
+	}
+	return OutsideBounds(d[0])
+}
+
 // Uint is a uint that implements Parser
 type Uint struct {
 	Data *uint
@@ -146,6 +166,25 @@ func (u Uint64) Parse(d []string) error {
 	return err
 }
 
+// UintBetween is an implementation of Parser that allows an unsigned integer
+// between the Min and Max (inclusively)
+type UintBetween struct {
+	Parser
+	Min, Max uint64
+}
+
+// Parse is an implementation of Parser
+func (u UintBetween) Parse(d []string) error {
+	n, err := strconv.ParseUint(d[0], 10, 64)
+	if err != nil {
+		return err
+	}
+	if n >= u.Min && n <= u.Max {
+		return u.Parser.Parse(d)
+	}
+	return OutsideBounds(d[0])
+}
+
 // Float32 is a float32 that implements Parser
 type Float32 struct {
 	Data *float32
@@ -170,6 +209,25 @@ func (f Float64) Parse(d []string) error {
 	return err
 }
 
+// FloatBetween is an implementation of Parser that allows a float between the
+// Min and Max (inclusively)
+type FloatBetween struct {
+	Parser
+	Min, Max float64
+}
+
+// Parse is an implementation of Parser
+func (f FloatBetween) Parse(d []string) error {
+	n, err := strconv.ParseFloat(d[0], 64)
+	if err != nil {
+		return err
+	}
+	if n >= f.Min && n <= f.Max {
+		return f.Parser.Parse(d)
+	}
+	return OutsideBounds(d[0])
+}
+
 // String is a string that implements Parser
 type String struct {
 	Data *string
@@ -179,6 +237,22 @@ type String struct {
 func (s String) Parse(d []string) error {
 	*s.Data = d[0]
 	return nil
+}
+
+// RegexString is an implementation of Parser that matches a string again the
+// given regular expression
+type RegexString struct {
+	Data  *string
+	Regex *regexp.Regexp
+}
+
+// Parse is an implementation of Parser
+func (r RegexString) Parse(d []string) error {
+	if r.Regex.MatchString(d[0]) {
+		*s.Data = d[0]
+		return nil
+	}
+	return NoRegexMatch(d[0])
 }
 
 var formats = [...]string{
@@ -266,7 +340,23 @@ func (t TimeFormat) Parse(d []string) error {
 
 // Errors
 
-// UnknownFormat is an error return from Time.Parse when it cannot determine
+// OutsideBounds is an error returned from a Parser when the parsed value falls
+// outside of the range given as an acceptable value
+type OutsideBounds string
+
+func (OutsideBounds) Error() string {
+	return "value received was outside of specified bounds"
+}
+
+// NoRegexMatch is an error returned from RegexString.Parse when the given
+// string does not match the given regular expression
+type NoRegexMatch string
+
+func (NoRegexMatch) Error() string {
+	return "string did not match given regular expression"
+}
+
+// UnknownFormat is an error returned from Time.Parse when it cannot determine
 // the time format of the given string
 type UnknownFormat string
 
