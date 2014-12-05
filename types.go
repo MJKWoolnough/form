@@ -249,7 +249,7 @@ type RegexString struct {
 // Parse is an implementation of Parser
 func (r RegexString) Parse(d []string) error {
 	if r.Regex.MatchString(d[0]) {
-		*s.Data = d[0]
+		*r.Data = d[0]
 		return nil
 	}
 	return NoRegexMatch(d[0])
@@ -261,7 +261,8 @@ func (r RequiredString) Parse(d []string) error {
 	if d[0] == "" {
 		return Empty{}
 	}
-	*s.Data = d[0]
+	*r.Data = d[0]
+	return nil
 }
 
 var formats = [...]string{
