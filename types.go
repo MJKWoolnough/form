@@ -92,7 +92,7 @@ type Uint struct {
 }
 
 // Parse is an implementation of Parser
-func (u *Uint) Parse(d []string) error {
+func (u Uint) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 0)
 	*u.Data = uint(n)
 	return err
@@ -104,7 +104,7 @@ type Uint8 struct {
 }
 
 // Parse is an implementation of Parser
-func (u *Uint8) Parse(d []string) error {
+func (u Uint8) Parse(d []string) error {
 	n, err := strconv.ParseUint(d[0], 10, 8)
 	*u.Data = uint8(n)
 	return err
