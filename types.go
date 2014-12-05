@@ -348,6 +348,17 @@ func (t TimeFormat) Parse(d []string) error {
 	return err
 }
 
+type Single struct {
+	Name string
+	Parser
+}
+
+func (s Single) ParserList() ParserList {
+	return ParserList{
+		s.Name: s,
+	}
+}
+
 // Errors
 
 // OutsideBounds is an error returned from a Parser when the parsed value falls
