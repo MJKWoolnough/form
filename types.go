@@ -255,6 +255,15 @@ func (r RegexString) Parse(d []string) error {
 	return NoRegexMatch(d[0])
 }
 
+type RequiredString String
+
+func (r RequiredString) Parse(d []string) error {
+	if d[0] == "" {
+		return Empty{}
+	}
+	*s.Data = d[0]
+}
+
 var formats = [...]string{
 	time.ANSIC,
 	time.Kitchen,
@@ -354,6 +363,14 @@ type NoRegexMatch string
 
 func (NoRegexMatch) Error() string {
 	return "string did not match given regular expression"
+}
+
+// Empty is returned when a field contains only an empty string and that is not
+// allowed
+type Empty struct{}
+
+func (Empty) Error() string {
+	return "field is empty"
 }
 
 // UnknownFormat is an error returned from Time.Parse when it cannot determine
