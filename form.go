@@ -37,7 +37,7 @@ func ParseValue(name string, value Parser, data url.Values) error {
 }
 
 // Parse parses the given url.Values into the type given
-func Parse(p parserLister, data url.Values) error {
+func Parse(p ParserLister, data url.Values) error {
 	errs := make(Errors)
 	for k, v := range p.ParserList() {
 		if d, ok := data[k]; ok {
