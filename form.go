@@ -25,7 +25,9 @@ func (p ParserList) ParserList() ParserList {
 	return p
 }
 
-type parserLister interface {
+// ParserLister is the main interface for this package. The single method
+// ParserList returns a ParserList map of field names to Parser's
+type ParserLister interface {
 	ParserList() ParserList
 }
 
