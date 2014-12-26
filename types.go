@@ -348,19 +348,6 @@ func (t TimeFormat) Parse(d []string) error {
 	return err
 }
 
-// Single implements the parsing of a single type simply
-type Single struct {
-	Name string
-	Parser
-}
-
-// PaserList is an implementation of ParserLister
-func (s Single) ParserList() ParserList {
-	return ParserList{
-		s.Name: s,
-	}
-}
-
 // Errors
 
 // OutsideBounds is an error returned from a Parser when the parsed value falls
