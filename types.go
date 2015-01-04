@@ -255,8 +255,11 @@ func (r RegexString) Parse(d []string) error {
 	return NoRegexMatch(d[0])
 }
 
+// RequiredString is like String except that it returns an error when it gets
+// an empty string
 type RequiredString String
 
+// Parse is an implementation of Parser
 func (r RequiredString) Parse(d []string) error {
 	if d[0] == "" {
 		return Empty{}
