@@ -332,6 +332,21 @@ func (t Time) Parse(d []string) error {
 	return UnknownFormat(d[0])
 }
 
+// UnixTime is like time except that it expects the time to be a Unix timestamp
+type UnixTime struct {
+	Data *time.Time
+}
+
+// Parse is an implementation of Parser
+func (u UnixTime) Parse(d []string) error {
+	i, err := strconv.ParseInt(d[0], 10, 64)
+	if err != nil {
+		return err
+	}
+	*u.Data = time.Unix(i, 0)
+	return nil
+}
+
 // TimeFormat is like a Time except that it allows a specific format to be
 // specified
 type TimeFormat struct {
