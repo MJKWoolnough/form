@@ -18,7 +18,7 @@ type Parser interface {
 	Parse([]string) error
 }
 
-// ParserList is a simple implementation of a parserLister that simple returns
+// ParserList is a simple implementation of a parserLister that simply returns
 // itself
 type ParserList map[string]Parser
 
