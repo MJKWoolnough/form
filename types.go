@@ -361,9 +361,10 @@ type TimeFormat struct {
 func (t TimeFormat) Parse(d []string) error {
 	pt, err := time.Parse(t.Format, d[0])
 	if err != nil {
-		*t.Data = pt
+		return err
 	}
-	return err
+	*t.Data = pt
+	return nil
 }
 
 // Errors
