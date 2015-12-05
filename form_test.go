@@ -58,21 +58,21 @@ func newFloat32(v float32) Float32 {
 	return Float32{&v}
 }
 
-func (i Int8) Equal(e equaler.Equaler) bool {
+func (i Int8) Equal(e interface{}) bool {
 	if d, ok := e.(Int8); ok {
 		return *d.Data == *i.Data
 	}
 	return false
 }
 
-func (u Uint16) Equal(e equaler.Equaler) bool {
+func (u Uint16) Equal(e interface{}) bool {
 	if d, ok := e.(Uint16); ok {
 		return *d.Data == *u.Data
 	}
 	return false
 }
 
-func (f Float32) Equal(e equaler.Equaler) bool {
+func (f Float32) Equal(e interface{}) bool {
 	if d, ok := e.(Float32); ok {
 		return *d.Data == *f.Data
 	}
