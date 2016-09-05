@@ -13,7 +13,7 @@ func (Errors) Error() string {
 	return "errors encountered"
 }
 
-// Parser is an interface used to to parse a specfic type
+// Parser is an interface used to to parse a specific type
 type Parser interface {
 	Parse([]string) error
 }
