@@ -262,7 +262,7 @@ type Parser interface {
 }
 ```
 
-Parser is an interface used to to parse a specfic type
+Parser is an interface used to to parse a specific type
 
 #### type ParserList
 
