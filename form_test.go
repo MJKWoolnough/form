@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/MJKWoolnough/equaler"
+	"vimagination.zapto.org/equaler"
 )
 
 func TestParse(t *testing.T) {
