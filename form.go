@@ -9,16 +9,13 @@ import (
 	"sync"
 )
 
-type processor struct {
+type processorDetails struct {
+	processor
 	Post, Required bool
 	Index          []int
 }
 
-func (p processor) process(v reflect.Value, data []string) error {
-	return nil
-}
-
-type typeMap map[string]processor
+type typeMap map[string]processorDetails
 
 var (
 	tmMu     sync.RWMutex
@@ -63,18 +60,18 @@ func ProcessForm(r *http.Request, fv interface{}) error {
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
-	for key, processor := range tm {
+	for key, pd := range tm {
 		var (
 			val []string
 			ok  bool
 		)
-		if processor.Post {
+		if pd.Post {
 			val, ok = r.PostForm[key]
 		} else {
 			val, ok = r.Form[key]
 		}
 		if ok {
-			if err := processor.process(v.FieldByIndex(processor.Index), val); err != nil {
+			if err := pd.processor.process(v.FieldByIndex(processor.Index), val); err != nil {
 
 			}
 		} else if processor.Required {
