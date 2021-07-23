@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"reflect"
+	"sync"
 )
 
 type processor struct {
@@ -19,8 +20,32 @@ func (p processor) process(v reflect.Value, data []string) error {
 
 type typeMap map[string]processor
 
+var (
+	tmMu     sync.RWMutex
+	typeMaps = make(map[reflect.Type]typeMap)
+)
+
+func getTypeMap(t reflect.Type) typeMap {
+	tmMu.RLock()
+	tm, ok := typeMaps[t]
+	tmMu.RUnlock()
+	if ok {
+		return tm
+	}
+	tmMu.Lock()
+	tm = createTypeMap(t)
+	tmMu.Unlock()
+	return tm
+}
+
 func createTypeMap(t reflect.Type) typeMap {
-	return nil
+	tm, ok = typeMaps[t]
+	if ok {
+		return tm
+	}
+	tm = make(typeMap)
+	typeMaps[t] = tm
+	return tm
 }
 
 func ProcessForm(r *http.Request, fv interface{}) error {
@@ -34,7 +59,7 @@ func ProcessForm(r *http.Request, fv interface{}) error {
 	if v.Kind() != reflect.Struct {
 		return ErrNeedStruct
 	}
-	tm := createTypeMap(v.Type())
+	tm := getTypeMap(v.Type())
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
