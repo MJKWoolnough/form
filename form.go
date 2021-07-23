@@ -107,10 +107,18 @@ func ProcessForm(r *http.Request, fv interface{}) error {
 
 			}
 		} else if pd.Required {
-
+			return ErrRequiredMissing(key)
 		}
 	}
 	return nil
+}
+
+// ErrRequiredMissing is an error returned when a required form value is not
+// specified
+type ErrRequiredMissing string
+
+func (ErrRequiredMissing) Error() string {
+	return "required value missing"
 }
 
 // Errors
