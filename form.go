@@ -36,11 +36,25 @@ func getTypeMap(t reflect.Type) typeMap {
 }
 
 func createTypeMap(t reflect.Type) typeMap {
-	tm, ok = typeMaps[t]
+	tm, ok := typeMaps[t]
 	if ok {
 		return tm
 	}
 	tm = make(typeMap)
+	for i := 0; i < t.Len(); i++ {
+		f := t.Field(i)
+		if f.PkgPath != "" {
+			continue
+		}
+		name := f.Name
+		if n := f.Tag.Get("form"); n != "" {
+			name = n
+		}
+		switch f.Type.Kind() {
+		case reflect.Int8:
+			tm[name] = newInum8(f.Type)
+		}
+	}
 	typeMaps[t] = tm
 	return tm
 }
@@ -71,10 +85,10 @@ func ProcessForm(r *http.Request, fv interface{}) error {
 			val, ok = r.Form[key]
 		}
 		if ok {
-			if err := pd.processor.process(v.FieldByIndex(processor.Index), val); err != nil {
+			if err := pd.processor.process(v.FieldByIndex(pd.Index), val); err != nil {
 
 			}
-		} else if processor.Required {
+		} else if pd.Required {
 
 		}
 	}
