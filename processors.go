@@ -1,7 +1,6 @@
 package form
 
 import (
-	"errors"
 	"reflect"
 	"strconv"
 )
@@ -45,8 +44,3 @@ func (i inum8) process(v reflect.Value, data []string) error {
 	v.SetInt(num)
 	return nil
 }
-
-// Errors
-var (
-	ErrNotInRange = errors.New("value not in valid range")
-)
