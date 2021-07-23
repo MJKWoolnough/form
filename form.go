@@ -4,6 +4,7 @@ package form // import "vimagination.zapto.org/form"
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"reflect"
 	"sync"
@@ -104,7 +105,10 @@ func ProcessForm(r *http.Request, fv interface{}) error {
 		}
 		if ok {
 			if err := pd.processor.process(v.FieldByIndex(pd.Index), val); err != nil {
-
+				return ErrProcessingFailed{
+					Key:   key,
+					Error: err,
+				}
 			}
 		} else if pd.Required {
 			return ErrRequiredMissing(key)
@@ -119,6 +123,19 @@ type ErrRequiredMissing string
 
 func (ErrRequiredMissing) Error() string {
 	return "required value missing"
+}
+
+type ErrProcessingFailed struct {
+	Key   string
+	Error error
+}
+
+func (e ErrProcessingFailed) Error() string {
+	return fmt.Sprintf("error processing key %q: %s", e.Key, e.Error)
+}
+
+func (e ErrProcessingFailed) Unwrap() error {
+	return e.Error
 }
 
 // Errors
