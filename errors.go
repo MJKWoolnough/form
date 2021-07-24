@@ -40,7 +40,8 @@ func (e ErrProcessingFailed) Unwrap() error {
 
 // Errors
 var (
-	ErrNeedPointer = errors.New("need pointer to type")
-	ErrNeedStruct  = errors.New("need struct type")
-	ErrNotInRange  = errors.New("value not in valid range")
+	ErrNeedPointer    = errors.New("need pointer to type")
+	ErrNeedStruct     = errors.New("need struct type")
+	ErrNotInRange     = errors.New("value not in valid range")
+	ErrInvalidBoolean = errors.New("invalid boolean")
 )
