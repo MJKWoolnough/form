@@ -30,7 +30,7 @@ type ErrProcessingFailed struct {
 
 // Error implements the error interface
 func (e ErrProcessingFailed) Error() string {
-	return fmt.Sprintf("error processing key %q: %s", e.Key, e.Error)
+	return fmt.Sprintf("error processing key %q: %s", e.Key, e.Err)
 }
 
 // Unwrap retrieves the underlying error
