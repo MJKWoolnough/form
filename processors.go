@@ -23,7 +23,7 @@ func newInum(tags reflect.StructTag, bits int) inum {
 	if m := tags.Get("min"); m != "" {
 		im, err := strconv.ParseInt(m, 10, bits)
 		if err == nil {
-			i.min = int8(im)
+			i.min = im
 		}
 	}
 	if m := tags.Get("max"); m != "" {

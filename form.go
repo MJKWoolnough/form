@@ -53,15 +53,15 @@ func createTypeMap(t reflect.Type) typeMap {
 		}
 		switch f.Type.Kind() {
 		case reflect.Int8:
-			tm[name] = newInum(f.Type, 8)
+			tm[name] = newInum(f.Tag, 8)
 		case reflect.Int16:
-			tm[name] = newInum(f.Type, 8)
+			tm[name] = newInum(f.Tag, 16)
 		case reflect.Int32:
-			tm[name] = newInum(f.Type, 8)
+			tm[name] = newInum(f.Tag, 32)
 		case reflect.Int64:
-			tm[name] = newInum(f.Type, 8)
+			tm[name] = newInum(f.Tag, 64)
 		case reflect.Int:
-			tm[name] = newInum(f.Type, 8)
+			tm[name] = newInum(f.Tag, 0)
 		}
 	}
 	typeMaps[t] = tm
@@ -97,8 +97,8 @@ func ProcessForm(r *http.Request, fv interface{}) error {
 		if ok {
 			if err := pd.processor.process(v.FieldByIndex(pd.Index), val); err != nil {
 				errors = append(errors, ErrProcessingFailed{
-					Key:   key,
-					Error: err,
+					Key: key,
+					Err: err,
 				})
 			}
 		} else if pd.Required {

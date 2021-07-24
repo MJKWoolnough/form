@@ -24,8 +24,8 @@ func (ErrRequiredMissing) Error() string {
 
 // ErrProcessingFailed is an error describing a failed data processing
 type ErrProcessingFailed struct {
-	Key   string
-	Error error
+	Key string
+	Err error
 }
 
 // Error implements the error interface
@@ -35,7 +35,7 @@ func (e ErrProcessingFailed) Error() string {
 
 // Unwrap retrieves the underlying error
 func (e ErrProcessingFailed) Unwrap() error {
-	return e.Error
+	return e.Err
 }
 
 // Errors
