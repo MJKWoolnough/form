@@ -57,6 +57,8 @@ func createTypeMap(t reflect.Type) typeMap {
 			p = newInum(f.Tag, f.Type.Bits())
 		case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
 			p = newUnum(f.Tag, f.Type.Bits())
+		case reflect.Float32, reflect.Float64:
+			p = newFloat(f.Tag, f.Type.Bits())
 		default:
 			continue
 		}

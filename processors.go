@@ -84,3 +84,41 @@ func (u unum) process(v reflect.Value, data []string) error {
 	v.SetUint(num)
 	return nil
 }
+
+type float struct {
+	min, max float64
+	bits     int
+}
+
+func newFloat(tags reflect.StructTag, bits int) float {
+	f := float{
+		min:  -math.MaxFloat64,
+		max:  math.MaxFloat64,
+		bits: bits,
+	}
+	if m := tags.Get("min"); m != "" {
+		um, err := strconv.ParseFloat(m, bits)
+		if err == nil {
+			f.min = um
+		}
+	}
+	if m := tags.Get("max"); m != "" {
+		um, err := strconv.ParseFloat(m, bits)
+		if err == nil {
+			f.max = um
+		}
+	}
+	return f
+}
+
+func (f float) process(v reflect.Value, data []string) error {
+	num, err := strconv.ParseFloat(data[0], f.bits)
+	if err != nil {
+		return err
+	}
+	if num < f.min || num > f.max {
+		return ErrNotInRange
+	}
+	v.SetFloat(num)
+	return nil
+}
