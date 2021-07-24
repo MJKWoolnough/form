@@ -47,3 +47,40 @@ func (i inum) process(v reflect.Value, data []string) error {
 	v.SetInt(num)
 	return nil
 }
+
+type unum struct {
+	min, max uint64
+	bits     int
+}
+
+func newUnum(tags reflect.StructTag, bits int) unum {
+	u := unum{
+		max:  math.MaxUint64,
+		bits: bits,
+	}
+	if m := tags.Get("min"); m != "" {
+		um, err := strconv.ParseUint(m, 10, bits)
+		if err == nil {
+			u.min = um
+		}
+	}
+	if m := tags.Get("max"); m != "" {
+		um, err := strconv.ParseUint(m, 10, bits)
+		if err == nil {
+			u.max = um
+		}
+	}
+	return u
+}
+
+func (u unum) process(v reflect.Value, data []string) error {
+	num, err := strconv.ParseUint(data[0], 10, u.bits)
+	if err != nil {
+		return err
+	}
+	if num < u.min || num > u.max {
+		return ErrNotInRange
+	}
+	v.SetUint(num)
+	return nil
+}
