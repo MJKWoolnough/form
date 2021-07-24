@@ -4,6 +4,7 @@ import (
 	"math"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 type processor interface {
@@ -120,5 +121,19 @@ func (f float) process(v reflect.Value, data []string) error {
 		return ErrNotInRange
 	}
 	v.SetFloat(num)
+	return nil
+}
+
+type boolean struct{}
+
+func (boolean) process(v reflect.Value, data []string) error {
+	switch strings.ToLower(data[0]) {
+	case "on", "yes", "y", "1", "t", "true":
+		v.SetBool(true)
+	case "off", "no", "n", "0", "f", "false":
+		v.SetBool(false)
+	default:
+		return ErrInvalidBoolean
+	}
 	return nil
 }
