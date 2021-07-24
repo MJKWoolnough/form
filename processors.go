@@ -9,32 +9,34 @@ type processor interface {
 	process(reflect.Value, []string) error
 }
 
-type inum8 struct {
-	min, max int8
+type inum struct {
+	min, max int64
+	bits     int
 }
 
-func newInum8(tags reflect.StructTag) inum8 {
-	i := inum8{
-		min: -128,
-		max: 127,
+func newInum(tags reflect.StructTag, bits int) inum {
+	i := inum{
+		min:  0x8000000000000000,
+		max:  0x7FFFFFFFFFFFFFFF,
+		bits: bits,
 	}
 	if m := tags.Get("min"); m != "" {
-		im, err := strconv.ParseInt(m, 10, 8)
+		im, err := strconv.ParseInt(m, 10, bits)
 		if err == nil {
 			i.min = int8(im)
 		}
 	}
 	if m := tags.Get("max"); m != "" {
-		im, err := strconv.ParseInt(m, 10, 8)
+		im, err := strconv.ParseInt(m, 10, bits)
 		if err == nil {
-			i.max = int8(im)
+			i.max = im
 		}
 	}
 	return i
 }
 
-func (i inum8) process(v reflect.Value, data []string) error {
-	num, err := strconv.ParseInt(data[0], 10, 8)
+func (i inum) process(v reflect.Value, data []string) error {
+	num, err := strconv.ParseInt(data[0], 10, i.bits)
 	if err != nil {
 		return err
 	}

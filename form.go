@@ -53,25 +53,15 @@ func createTypeMap(t reflect.Type) typeMap {
 		}
 		switch f.Type.Kind() {
 		case reflect.Int8:
-			tm[name] = newInum8(f.Type)
+			tm[name] = newInum(f.Type, 8)
 		case reflect.Int16:
-			tm[name] = newInum16(f.Type)
+			tm[name] = newInum(f.Type, 8)
 		case reflect.Int32:
-			tm[name] = newInum32(f.Type)
+			tm[name] = newInum(f.Type, 8)
 		case reflect.Int64:
-			tm[name] = newInum64(f.Type)
+			tm[name] = newInum(f.Type, 8)
 		case reflect.Int:
-			tm[name] = newInum(f.Type)
-		case reflect.Uint8:
-			tm[name] = newUnum8(f.Type)
-		case reflect.Uint16:
-			tm[name] = newUnum16(f.Type)
-		case reflect.Uint32:
-			tm[name] = newUnum32(f.Type)
-		case reflect.Uint64:
-			tm[name] = newUnum64(f.Type)
-		case reflect.Uint:
-			tm[name] = newUnum(f.Type)
+			tm[name] = newInum(f.Type, 8)
 		}
 	}
 	typeMaps[t] = tm
