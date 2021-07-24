@@ -46,7 +46,9 @@ func createTypeMap(t reflect.Type) typeMap {
 			continue
 		}
 		name := f.Name
-		if n := f.Tag.Get("form"); n != "" {
+		if n := f.Tag.Get("form"); n == "-" {
+			continue
+		} else if n != "" {
 			name = n
 		}
 		switch f.Type.Kind() {
