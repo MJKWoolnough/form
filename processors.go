@@ -1,6 +1,7 @@
 package form
 
 import (
+	"math"
 	"reflect"
 	"strconv"
 )
@@ -16,8 +17,8 @@ type inum struct {
 
 func newInum(tags reflect.StructTag, bits int) inum {
 	i := inum{
-		min:  0x8000000000000000,
-		max:  0x7FFFFFFFFFFFFFFF,
+		min:  math.MinInt64,
+		max:  math.MaxInt64,
 		bits: bits,
 	}
 	if m := tags.Get("min"); m != "" {
