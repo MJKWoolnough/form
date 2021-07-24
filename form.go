@@ -53,16 +53,8 @@ func createTypeMap(t reflect.Type) typeMap {
 		}
 		var p processor
 		switch f.Type.Kind() {
-		case reflect.Int8:
-			p = newInum(f.Tag, 8)
-		case reflect.Int16:
-			p = newInum(f.Tag, 16)
-		case reflect.Int32:
-			p = newInum(f.Tag, 32)
-		case reflect.Int64:
-			p = newInum(f.Tag, 64)
-		case reflect.Int:
-			p = newInum(f.Tag, 0)
+		case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+			p = newInum(f.Tag, f.Type.Bits())
 		default:
 			continue
 		}
