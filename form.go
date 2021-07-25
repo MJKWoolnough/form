@@ -34,14 +34,14 @@ func getTypeMap(t reflect.Type) typeMap {
 	return tm
 }
 
-func basicTypeProcessor(k reflect.Kind) processor {
-	switch f.Type.Kind() {
+func basicTypeProcessor(t reflect.Type, tag reflect.StructTag) processor {
+	switch t.Kind() {
 	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
-		return newInum(f.Tag, f.Type.Bits())
+		return newInum(tag, t.Bits())
 	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
-		return newUnum(f.Tag, f.Type.Bits())
+		return newUnum(tag, t.Bits())
 	case reflect.Float32, reflect.Float64:
-		return newFloat(f.Tag, f.Type.Bits())
+		return newFloat(tag, t.Bits())
 	case reflect.Bool:
 		return boolean{}
 	}
@@ -68,7 +68,7 @@ func createTypeMap(t reflect.Type) typeMap {
 		var p processor
 		switch f.Type.Kind() {
 		default:
-			p = basicTypeProcessor(f.Type.Kind())
+			p = basicTypeProcessor(f.Type, f.Tag)
 			if p == nil {
 				continue
 			}
