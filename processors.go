@@ -160,3 +160,17 @@ func (s slice) process(v reflect.Value, data []string) error {
 	}
 	return nil
 }
+
+type pointer struct {
+	processor
+	typ reflect.Type
+}
+
+func (p pointer) process(v reflect.Value, data []string) error {
+	pv := reflect.New(p.typ)
+	if err := p.processor.process(pv.Elem(), data); err != nil {
+		return err
+	}
+	v.Set(pv)
+	return nil
+}
