@@ -67,6 +67,16 @@ func createTypeMap(t reflect.Type) typeMap {
 		}
 		var p processor
 		switch f.Type.Kind() {
+		case reflect.Slice:
+			et := f.Type.Elem()
+			s := basicTypeProcessor(et, f.Tag)
+			if s == nil {
+				continue
+			}
+			p = slice{
+				processor: s,
+				typ:       et,
+			}
 		default:
 			p = basicTypeProcessor(f.Type, f.Tag)
 			if p == nil {
