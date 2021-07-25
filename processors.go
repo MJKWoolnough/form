@@ -124,6 +124,13 @@ func (f float) process(v reflect.Value, data []string) error {
 	return nil
 }
 
+type str struct{}
+
+func (str) process(v reflect.Value, data []string) error {
+	v.SetString(data[0])
+	return nil
+}
+
 type boolean struct{}
 
 func (boolean) process(v reflect.Value, data []string) error {
