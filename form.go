@@ -77,6 +77,16 @@ func createTypeMap(t reflect.Type) typeMap {
 				processor: s,
 				typ:       et,
 			}
+		case reflect.Ptr:
+			et := f.Type.Elem()
+			s := basicTypeProcessor(et, f.Tag)
+			if s == nil {
+				continue
+			}
+			p = pointer{
+				processor: s,
+				typ:       et,
+			}
 		default:
 			p = basicTypeProcessor(f.Type, f.Tag)
 			if p == nil {
