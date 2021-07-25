@@ -42,6 +42,8 @@ func basicTypeProcessor(t reflect.Type, tag reflect.StructTag) processor {
 		return newUnum(tag, t.Bits())
 	case reflect.Float32, reflect.Float64:
 		return newFloat(tag, t.Bits())
+	case reflect.String:
+		return str{}
 	case reflect.Bool:
 		return boolean{}
 	}
