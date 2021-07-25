@@ -137,3 +137,26 @@ func (boolean) process(v reflect.Value, data []string) error {
 	}
 	return nil
 }
+
+type slice struct {
+	processor
+	typ reflect.Type
+}
+
+func (s slice) process(v reflect.Value, data []string) error {
+	v.Set(reflect.MakeSlice(s.typ, 1, len(data)))
+	l := 0
+	errs := make(Errors, 0)
+	for n := range data {
+		if err := s.processor.process(v.Index(l), data[n:]); err != nil {
+			errs = append(errs, err)
+		} else if l < len(data) {
+			l++
+			v.SetLen(l + 1)
+		}
+	}
+	if len(errs) > 0 {
+		return errs
+	}
+	return nil
+}
