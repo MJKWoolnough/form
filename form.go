@@ -103,7 +103,7 @@ func createTypeMap(t reflect.Type) typeMap {
 	return tm
 }
 
-func ProcessForm(r *http.Request, fv interface{}) error {
+func Process(r *http.Request, fv interface{}) error {
 	v := reflect.ValueOf(fv)
 	if v.Kind() != reflect.Ptr {
 		return ErrNeedPointer
