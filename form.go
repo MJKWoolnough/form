@@ -80,28 +80,24 @@ func createTypeMap(t reflect.Type) typeMap {
 			}
 		}
 		var p processor
-		switch f.Type.Kind() {
-		case reflect.Slice:
+		if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
 			et := f.Type.Elem()
 			s := basicTypeProcessor(et, f.Tag)
 			if s == nil {
 				continue
 			}
-			p = slice{
-				processor: s,
-				typ:       et,
+			if k == reflect.Slice {
+				p = slice{
+					processor: s,
+					typ:       et,
+				}
+			} else {
+				p = pointer{
+					processor: s,
+					typ:       et,
+				}
 			}
-		case reflect.Ptr:
-			et := f.Type.Elem()
-			s := basicTypeProcessor(et, f.Tag)
-			if s == nil {
-				continue
-			}
-			p = pointer{
-				processor: s,
-				typ:       et,
-			}
-		default:
+		} else {
 			p = basicTypeProcessor(f.Type, f.Tag)
 			if p == nil {
 				continue
