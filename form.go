@@ -9,6 +9,8 @@ import (
 	"sync"
 )
 
+var interType = reflect.TypeOf((*formParser)(nil)).Elem()
+
 type processorDetails struct {
 	processor
 	Post, Required bool
@@ -80,7 +82,11 @@ func createTypeMap(t reflect.Type) typeMap {
 			}
 		}
 		var p processor
-		if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
+		if f.Type.Implements(interType) {
+			p = inter(false)
+		} else if reflect.PtrTo(f.Type).Implements(interType) {
+			p = inter(true)
+		} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
 			et := f.Type.Elem()
 			s := basicTypeProcessor(et, f.Tag)
 			if s == nil {
