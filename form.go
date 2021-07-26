@@ -132,6 +132,30 @@ func createTypeMap(t reflect.Type) typeMap {
 	return tm
 }
 
+// Process parses the form data from the request into the passed value, which
+// must be a pointer to a struct.
+//
+// Form keys are assumed to be the field names unless a 'form' tag is provided
+// with an alternate name, for example, in the following struct, the int is
+// parse with key 'A' and the bool is parsed with key 'C'.
+//
+// type Example struct {
+//	A int
+//	B bool `form:"C"`
+// }
+//
+// Two options can be added to the form tag to modify the processing. The
+// 'post' option forces the processer to parse a value from the PostForm field
+// of the Request, and the 'required' option will have an error thrown if the
+// key in not set.
+//
+// Number types can also have minimums and maximums checked during processing
+// by setting the min and max tags accordingly.
+//
+// Lastly, a custom data processor can be specified by attaching a method to
+// the field type with the following specification:
+//
+// ParseForm([]string) error
 func Process(r *http.Request, fv interface{}) error {
 	v := reflect.ValueOf(fv)
 	if v.Kind() != reflect.Ptr {
