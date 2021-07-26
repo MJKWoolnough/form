@@ -1,5 +1,5 @@
 // Package form provides an easy to use way to parse form values from an HTTP
-// request into a struct or other data object
+// request into a struct
 package form // import "vimagination.zapto.org/form"
 
 import (
