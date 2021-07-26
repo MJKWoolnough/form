@@ -103,6 +103,18 @@ func createTypeMap(t reflect.Type) typeMap {
 					typ:       et,
 				}
 			}
+		} else if k == reflect.Struct && f.Anonymous {
+			for n, p := range createTypeMap(f.Type) {
+				if _, ok := tm[n]; !ok {
+					tm[n] = processorDetails{
+						processor: p.processor,
+						Required:  p.Required,
+						Post:      p.Post,
+						Index:     append(append(make([]int, 0, len(p.Index)+1), i), p.Index...),
+					}
+				}
+			}
+			continue
 		} else {
 			p = basicTypeProcessor(f.Type, f.Tag)
 			if p == nil {
