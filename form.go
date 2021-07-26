@@ -5,6 +5,7 @@ package form // import "vimagination.zapto.org/form"
 import (
 	"net/http"
 	"reflect"
+	"strings"
 	"sync"
 )
 
@@ -62,10 +63,21 @@ func createTypeMap(t reflect.Type) typeMap {
 			continue
 		}
 		name := f.Name
+		var required, post bool
 		if n := f.Tag.Get("form"); n == "-" {
 			continue
 		} else if n != "" {
-			name = n
+			p := strings.IndexByte(n, ',')
+			if p >= 0 {
+				if p > 0 {
+					name = n[:p]
+				}
+				rest := n[p:]
+				required = strings.Contains(rest, ",required,") || strings.HasPrefix(rest, ",required")
+				post = strings.Contains(rest, ",post,") || strings.HasPrefix(rest, ",post")
+			} else {
+				name = n
+			}
 		}
 		var p processor
 		switch f.Type.Kind() {
@@ -97,6 +109,8 @@ func createTypeMap(t reflect.Type) typeMap {
 		}
 		tm[name] = processorDetails{
 			processor: p,
+			Required:  required,
+			Post:      post,
 		}
 	}
 	typeMaps[t] = tm
