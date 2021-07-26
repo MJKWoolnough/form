@@ -181,3 +181,16 @@ func (p pointer) process(v reflect.Value, data []string) error {
 	v.Set(pv)
 	return nil
 }
+
+type formParser interface {
+	ParseForm([]string) error
+}
+
+type inter bool
+
+func (i inter) process(v reflect.Value, data []string) error {
+	if i {
+		v = v.Addr()
+	}
+	return v.Interface().(formParser).ParseForm(data)
+}
