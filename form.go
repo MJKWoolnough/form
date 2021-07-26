@@ -125,6 +125,7 @@ func createTypeMap(t reflect.Type) typeMap {
 			processor: p,
 			Required:  required,
 			Post:      post,
+			Index:     []int{i},
 		}
 	}
 	typeMaps[t] = tm
