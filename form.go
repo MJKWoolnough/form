@@ -75,8 +75,8 @@ func createTypeMap(t reflect.Type) typeMap {
 					name = n[:p]
 				}
 				rest := n[p:]
-				required = strings.Contains(rest, ",required,") || strings.HasPrefix(rest, ",required")
-				post = strings.Contains(rest, ",post,") || strings.HasPrefix(rest, ",post")
+				required = strings.Contains(rest, ",required,") || strings.HasSuffix(rest, ",required")
+				post = strings.Contains(rest, ",post,") || strings.HasSuffix(rest, ",post")
 			} else {
 				name = n
 			}
