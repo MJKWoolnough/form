@@ -57,6 +57,22 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
+		{
+			Input: reflect.TypeOf(struct {
+				A int `form:",post"`
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: inum{
+						bits: 64,
+						min:  math.MinInt64,
+						max:  math.MaxInt64,
+					},
+					Post:  true,
+					Index: []int{0},
+				},
+			},
+		},
 	} {
 		output := createTypeMap(test.Input)
 		if !reflect.DeepEqual(output, test.Output) {
