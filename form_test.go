@@ -11,7 +11,7 @@ func TestCreateTypeMap(t *testing.T) {
 		Input  reflect.Type
 		Output typeMap
 	}{
-		{
+		{ // 1
 			Input: reflect.TypeOf(struct {
 				A int
 			}{}),
@@ -26,7 +26,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 2
 			Input: reflect.TypeOf(struct {
 				A int `form:"B"`
 			}{}),
@@ -41,7 +41,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 3
 			Input: reflect.TypeOf(struct {
 				A int `form:",required"`
 			}{}),
@@ -57,7 +57,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 4
 			Input: reflect.TypeOf(struct {
 				A int `form:",post"`
 			}{}),
@@ -73,7 +73,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 5
 			Input: reflect.TypeOf(struct {
 				A int `form:",post,required"`
 			}{}),
@@ -90,7 +90,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 6
 			Input: reflect.TypeOf(struct {
 				A int `form:",required,post"`
 			}{}),
