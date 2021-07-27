@@ -59,7 +59,7 @@ func createTypeMap(t reflect.Type) typeMap {
 		return tm
 	}
 	tm = make(typeMap)
-	for i := 0; i < t.Len(); i++ {
+	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
 		if f.PkgPath != "" {
 			continue
