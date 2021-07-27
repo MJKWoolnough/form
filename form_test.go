@@ -122,6 +122,21 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
+		{ // 8
+			Input: reflect.TypeOf(struct {
+				A int `max:"-20"`
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: inum{
+						bits: 64,
+						min:  math.MinInt64,
+						max:  -20,
+					},
+					Index: []int{0},
+				},
+			},
+		},
 	} {
 		output := createTypeMap(test.Input)
 		if !reflect.DeepEqual(output, test.Output) {
