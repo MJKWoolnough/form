@@ -171,7 +171,7 @@ func Process(r *http.Request, fv interface{}) error {
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
-	var errors Errors
+	errors := make(ErrorMap)
 	for key, pd := range tm {
 		var (
 			val []string
@@ -184,13 +184,10 @@ func Process(r *http.Request, fv interface{}) error {
 		}
 		if ok {
 			if err := pd.processor.process(v.FieldByIndex(pd.Index), val); err != nil {
-				errors = append(errors, ErrProcessingFailed{
-					Key: key,
-					Err: err,
-				})
+				errors[key] = err
 			}
 		} else if pd.Required {
-			errors = append(errors, ErrRequiredMissing(key))
+			errors[key] = ErrRequiredMissing
 		}
 	}
 	if len(errors) > 0 {
