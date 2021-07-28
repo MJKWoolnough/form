@@ -197,6 +197,20 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
+		{ // 13
+			Input: reflect.TypeOf(struct {
+				A uint
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: unum{
+						bits: 64,
+						max:  math.MaxUint64,
+					},
+					Index: []int{0},
+				},
+			},
+		},
 	} {
 		output := createTypeMap(test.Input)
 		if !reflect.DeepEqual(output, test.Output) {
