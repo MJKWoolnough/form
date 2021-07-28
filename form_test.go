@@ -137,6 +137,66 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
+		{ // 9
+			Input: reflect.TypeOf(struct {
+				A int8
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: inum{
+						bits: 8,
+						min:  math.MinInt64,
+						max:  math.MaxInt64,
+					},
+					Index: []int{0},
+				},
+			},
+		},
+		{ // 10
+			Input: reflect.TypeOf(struct {
+				A int16
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: inum{
+						bits: 16,
+						min:  math.MinInt64,
+						max:  math.MaxInt64,
+					},
+					Index: []int{0},
+				},
+			},
+		},
+		{ // 11
+			Input: reflect.TypeOf(struct {
+				A int32
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: inum{
+						bits: 32,
+						min:  math.MinInt64,
+						max:  math.MaxInt64,
+					},
+					Index: []int{0},
+				},
+			},
+		},
+		{ // 12
+			Input: reflect.TypeOf(struct {
+				A int64
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: inum{
+						bits: 64,
+						min:  math.MinInt64,
+						max:  math.MaxInt64,
+					},
+					Index: []int{0},
+				},
+			},
+		},
 	} {
 		output := createTypeMap(test.Input)
 		if !reflect.DeepEqual(output, test.Output) {
