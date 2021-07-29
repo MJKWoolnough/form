@@ -437,7 +437,32 @@ func TestProcess(t *testing.T) {
 		Get, Post url.Values
 		Output    interface{}
 		Err       error
-	}{} {
+	}{
+		{
+			url.Values{
+				"A": []string{"1"},
+			},
+			url.Values{},
+			struct {
+				A int
+			}{
+				A: 1,
+			},
+			nil,
+		},
+		{
+			url.Values{},
+			url.Values{
+				"A": []string{"1"},
+			},
+			struct {
+				A int
+			}{
+				A: 1,
+			},
+			nil,
+		},
+	} {
 		r := http.Request{
 			Method: http.MethodPost,
 			URL: &url.URL{
