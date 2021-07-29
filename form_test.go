@@ -406,6 +406,20 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
+		{ // 28
+			Input: reflect.TypeOf(struct {
+				A []bool
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: slice{
+						processor: boolean{},
+						typ:       reflect.TypeOf(false),
+					},
+					Index: []int{0},
+				},
+			},
+		},
 	} {
 		output := createTypeMap(test.Input)
 		if !reflect.DeepEqual(output, test.Output) {
