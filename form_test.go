@@ -465,7 +465,7 @@ func TestProcess(t *testing.T) {
 		Output    interface{}
 		Err       error
 	}{
-		{
+		{ // 1
 			url.Values{
 				"A": []string{"1"},
 			},
@@ -477,7 +477,7 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
-		{
+		{ // 2
 			url.Values{},
 			url.Values{
 				"A": []string{"1"},
@@ -489,7 +489,7 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
-		{
+		{ // 3
 			url.Values{
 				"A": []string{"1"},
 			},
