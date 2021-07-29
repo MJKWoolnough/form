@@ -489,6 +489,20 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
+		{
+			url.Values{
+				"A": []string{"1"},
+			},
+			url.Values{
+				"A": []string{"2"},
+			},
+			struct {
+				A int `form:",post"`
+			}{
+				A: 2,
+			},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
