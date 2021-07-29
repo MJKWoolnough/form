@@ -1,9 +1,13 @@
 package form
 
 import (
+	"io/ioutil"
 	"math"
+	"net/http"
+	"net/url"
 	"reflect"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -424,6 +428,38 @@ func TestCreateTypeMap(t *testing.T) {
 		output := createTypeMap(test.Input)
 		if !reflect.DeepEqual(output, test.Output) {
 			t.Errorf("test %d: expecting output %v, got %v", n+1, test.Output, output)
+		}
+	}
+}
+
+func TestProcess(t *testing.T) {
+	for n, test := range [...]struct {
+		Get, Post url.Values
+		Output    interface{}
+		Err       error
+	}{} {
+		r := http.Request{
+			Method: http.MethodPost,
+			URL: &url.URL{
+				RawQuery: test.Get.Encode(),
+			},
+			Header: http.Header{
+				"Content-Type": []string{"application/x-www-form-urlencoded"},
+			},
+			Body: ioutil.NopCloser(strings.NewReader(test.Post.Encode())),
+		}
+		output := reflect.New(reflect.TypeOf(test.Output))
+		err := Process(&r, output.Interface())
+		if err != nil {
+			if test.Err == nil {
+				t.Errorf("test %d: unexpected error: %s", n+1, err)
+			} else if err != test.Err {
+				t.Errorf("test %d: expecting error: %s\ngot: %s", n+1, test.Err, err)
+			}
+		} else if test.Err != nil {
+			t.Errorf("test %d: got no error when expecting: %s", n+1, test.Err)
+		} else if o := output.Elem().Interface(); !reflect.DeepEqual(o, test.Output) {
+			t.Errorf("test %d: expecting output: %#v\ngot: %#v", n+1, test.Output, o)
 		}
 	}
 }
