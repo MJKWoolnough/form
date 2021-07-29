@@ -3,6 +3,7 @@ package form
 import (
 	"math"
 	"reflect"
+	"regexp"
 	"testing"
 )
 
@@ -382,6 +383,19 @@ func TestCreateTypeMap(t *testing.T) {
 			},
 		},
 		{ // 26
+			Input: reflect.TypeOf(struct {
+				A string `regex:"/aaa/"`
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: str{
+						regex: regexp.MustCompile("/aaa/"),
+					},
+					Index: []int{0},
+				},
+			},
+		},
+		{ // 27
 			Input: reflect.TypeOf(struct {
 				A bool
 			}{}),
