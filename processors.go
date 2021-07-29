@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 type processor interface {
@@ -152,16 +151,51 @@ func (s str) process(v reflect.Value, data []string) error {
 
 type boolean struct{}
 
-func (boolean) process(v reflect.Value, data []string) error {
-	switch strings.ToLower(data[0]) {
-	case "on", "yes", "y", "1", "t", "true":
-		v.SetBool(true)
-	case "off", "no", "n", "0", "f", "false":
-		v.SetBool(false)
-	default:
-		return ErrInvalidBoolean
+func matchString(a string, b []byte) bool {
+	if len(a) != len(b) {
+		return false
 	}
-	return nil
+	for n, c := range b {
+		if a[n] != c && a[n] != c|32 {
+			return false
+		}
+	}
+	return true
+}
+
+var (
+	trues = [...][]byte{
+		{'1'},
+		{'Y'},
+		{'T'},
+		{'O', 'N'},
+		{'Y', 'E', 'S'},
+		{'T', 'R', 'U', 'E'},
+	}
+	falses = [...][]byte{
+		{'0'},
+		{'N'},
+		{'F'},
+		{'O', 'F', 'F'},
+		{'N', 'O'},
+		{'F', 'A', 'L', 'S', 'E'},
+	}
+)
+
+func (boolean) process(v reflect.Value, data []string) error {
+	for _, b := range trues {
+		if matchString(data[0], b) {
+			v.SetBool(true)
+			return nil
+		}
+	}
+	for _, b := range falses {
+		if matchString(data[0], b) {
+			v.SetBool(false)
+			return nil
+		}
+	}
+	return ErrInvalidBoolean
 }
 
 type slice struct {
