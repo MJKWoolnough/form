@@ -27,4 +27,5 @@ var (
 	ErrNotInRange      = errors.New("value not in valid range")
 	ErrInvalidBoolean  = errors.New("invalid boolean")
 	ErrRequiredMissing = errors.New("required field is missing")
+	ErrNoMatch         = errors.New("string did not match regex")
 )

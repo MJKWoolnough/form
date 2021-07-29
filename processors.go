@@ -3,6 +3,7 @@ package form
 import (
 	"math"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -124,9 +125,27 @@ func (f float) process(v reflect.Value, data []string) error {
 	return nil
 }
 
-type str struct{}
+type str struct {
+	regex *regexp.Regexp
+}
 
-func (str) process(v reflect.Value, data []string) error {
+func newString(tags reflect.StructTag) str {
+	if r := tags.Get("regex"); r != "" {
+		if re, err := regexp.Compile(r); err == nil {
+			return str{
+				regex: re,
+			}
+		}
+	}
+	return str{}
+}
+
+func (s str) process(v reflect.Value, data []string) error {
+	if s.regex != nil {
+		if !s.regex.MatchString(data[0]) {
+			return ErrNoMatch
+		}
+	}
 	v.SetString(data[0])
 	return nil
 }
