@@ -503,6 +503,16 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
+		{ // 4
+			url.Values{},
+			url.Values{},
+			struct {
+				A int `form:",required"`
+			}{},
+			ErrorMap{
+				"A": ErrRequiredMissing,
+			},
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
@@ -519,7 +529,7 @@ func TestProcess(t *testing.T) {
 		if err != nil {
 			if test.Err == nil {
 				t.Errorf("test %d: unexpected error: %s", n+1, err)
-			} else if err != test.Err {
+			} else if !reflect.DeepEqual(err, test.Err) {
 				t.Errorf("test %d: expecting error: %s\ngot: %s", n+1, test.Err, err)
 			}
 		} else if test.Err != nil {
