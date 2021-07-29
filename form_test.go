@@ -11,6 +11,10 @@ import (
 	"testing"
 )
 
+type X struct {
+	A string
+}
+
 func TestCreateTypeMap(t *testing.T) {
 	for n, test := range [...]struct {
 		Input  reflect.Type
@@ -421,6 +425,17 @@ func TestCreateTypeMap(t *testing.T) {
 						typ:       reflect.TypeOf(false),
 					},
 					Index: []int{0},
+				},
+			},
+		},
+		{ // 29
+			Input: reflect.TypeOf(struct {
+				X
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: str{},
+					Index:     []int{0, 0},
 				},
 			},
 		},
