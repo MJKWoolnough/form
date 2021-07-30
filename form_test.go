@@ -597,6 +597,72 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
+		{ // 12
+			url.Values{
+				"A": []string{"true"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{
+				A: true,
+			},
+			nil,
+		},
+		{ // 13
+			url.Values{
+				"A": []string{"false"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{},
+			nil,
+		},
+		{ // 14
+			url.Values{
+				"A": []string{"tRuE"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{
+				A: true,
+			},
+			nil,
+		},
+		{ // 15
+			url.Values{
+				"A": []string{"fAlSe"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{},
+			nil,
+		},
+		{ // 16
+			url.Values{
+				"A": []string{"ON"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{
+				A: true,
+			},
+			nil,
+		},
+		{ // 17
+			url.Values{
+				"A": []string{"OFF"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
