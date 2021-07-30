@@ -513,6 +513,18 @@ func TestProcess(t *testing.T) {
 				"A": ErrRequiredMissing,
 			},
 		},
+		{ // 5
+			url.Values{
+				"B": []string{"10"},
+			},
+			url.Values{},
+			struct {
+				A int `form:"B"`
+			}{
+				A: 10,
+			},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
