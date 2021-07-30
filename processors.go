@@ -156,7 +156,7 @@ func matchString(a string, b []byte) bool {
 		return false
 	}
 	for n, c := range b {
-		if a[n] != c && a[n] != c|32 {
+		if a[n]|32 != c {
 			return false
 		}
 	}
@@ -166,19 +166,19 @@ func matchString(a string, b []byte) bool {
 var (
 	trues = [...][]byte{
 		{'1'},
-		{'Y'},
-		{'T'},
-		{'O', 'N'},
-		{'Y', 'E', 'S'},
-		{'T', 'R', 'U', 'E'},
+		{'y'},
+		{'t'},
+		{'o', 'n'},
+		{'y', 'e', 's'},
+		{'t', 'r', 'u', 'e'},
 	}
 	falses = [...][]byte{
 		{'0'},
-		{'N'},
-		{'F'},
-		{'O', 'F', 'F'},
-		{'N', 'O'},
-		{'F', 'A', 'L', 'S', 'E'},
+		{'n'},
+		{'g'},
+		{'o', 'f', 'f'},
+		{'n', 'o'},
+		{'f', 'a', 'l', 's', 'e'},
 	}
 )
 
