@@ -675,6 +675,42 @@ func TestProcess(t *testing.T) {
 				"A": ErrInvalidBoolean,
 			},
 		},
+		{ // 19
+			url.Values{
+				"A": []string{"10"},
+			},
+			url.Values{},
+			struct {
+				A float64 `min:"15"`
+			}{},
+			ErrorMap{
+				"A": ErrNotInRange,
+			},
+		},
+		{ // 20
+			url.Values{
+				"A": []string{"10"},
+			},
+			url.Values{},
+			struct {
+				A float64 `max:"5"`
+			}{},
+			ErrorMap{
+				"A": ErrNotInRange,
+			},
+		},
+		{ // 21
+			url.Values{
+				"A": []string{"10.5"},
+			},
+			url.Values{},
+			struct {
+				A float64 `min:"5.5" max:"15.5"`
+			}{
+				A: 10.5,
+			},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
