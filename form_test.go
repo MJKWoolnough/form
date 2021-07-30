@@ -549,6 +549,18 @@ func TestProcess(t *testing.T) {
 				"A": ErrNotInRange,
 			},
 		},
+		{ // 8
+			url.Values{
+				"A": []string{"10"},
+			},
+			url.Values{},
+			struct {
+				A int `min:"5" max:"15"`
+			}{
+				A: 10,
+			},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
