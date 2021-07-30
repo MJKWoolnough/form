@@ -663,6 +663,18 @@ func TestProcess(t *testing.T) {
 			}{},
 			nil,
 		},
+		{ // 18
+			url.Values{
+				"A": []string{"!"},
+			},
+			url.Values{},
+			struct {
+				A bool
+			}{},
+			ErrorMap{
+				"A": ErrInvalidBoolean,
+			},
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
