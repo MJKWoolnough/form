@@ -711,6 +711,42 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
+		{ // 22
+			url.Values{
+				"A": []string{"HELLO, WORLD"},
+			},
+			url.Values{},
+			struct {
+				A string
+			}{
+				A: "HELLO, WORLD",
+			},
+			nil,
+		},
+		{ // 23
+			url.Values{
+				"A": []string{"HELLO, WORLD"},
+			},
+			url.Values{},
+			struct {
+				A string `regex:"HELLO"`
+			}{
+				A: "HELLO, WORLD",
+			},
+			nil,
+		},
+		{ // 24
+			url.Values{
+				"A": []string{"HELLO, WORLD"},
+			},
+			url.Values{},
+			struct {
+				A string `regex:"hello"`
+			}{},
+			ErrorMap{
+				"A": ErrNoMatch,
+			},
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
