@@ -534,7 +534,8 @@ func TestProcess(t *testing.T) {
 			}
 		} else if test.Err != nil {
 			t.Errorf("test %d: got no error when expecting: %s", n+1, test.Err)
-		} else if o := output.Elem().Interface(); !reflect.DeepEqual(o, test.Output) {
+		}
+		if o := output.Elem().Interface(); !reflect.DeepEqual(o, test.Output) {
 			t.Errorf("test %d: expecting output: %#v\ngot: %#v", n+1, test.Output, o)
 		}
 	}
