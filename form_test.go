@@ -759,6 +759,21 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
+		{ // 25
+			url.Values{
+				"A": []string{"HELLO, WORLD", "Beep, Beep"},
+			},
+			url.Values{},
+			struct {
+				A []string
+			}{
+				A: []string{
+					"HELLO, WORLD",
+					"Beep, Beep",
+				},
+			},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
