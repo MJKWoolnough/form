@@ -150,7 +150,10 @@ func createTypeMap(t reflect.Type) typeMap {
 // key in not set.
 //
 // Number types can also have minimums and maximums checked during processing
-// by setting the min and max tags accordingly.
+// by setting the 'min' and 'max' tags accordingly.
+//
+// In a similar vein, string types can utilise the 'regex' tag to set a
+// regular expression to be matched against.
 //
 // Lastly, a custom data processor can be specified by attaching a method to
 // the field type with the following specification:
