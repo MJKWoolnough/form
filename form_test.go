@@ -422,7 +422,7 @@ func TestCreateTypeMap(t *testing.T) {
 				"A": {
 					processor: slice{
 						processor: boolean{},
-						typ:       reflect.TypeOf(false),
+						typ:       reflect.TypeOf([]bool{}),
 					},
 					Index: []int{0},
 				},

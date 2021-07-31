@@ -95,7 +95,7 @@ func createTypeMap(t reflect.Type) typeMap {
 			if k == reflect.Slice {
 				p = slice{
 					processor: s,
-					typ:       et,
+					typ:       reflect.SliceOf(et),
 				}
 			} else {
 				p = pointer{

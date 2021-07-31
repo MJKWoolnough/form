@@ -205,14 +205,14 @@ type slice struct {
 
 func (s slice) process(v reflect.Value, data []string) error {
 	v.Set(reflect.MakeSlice(s.typ, 1, len(data)))
-	l := 0
+	l := 1
 	errs := make(Errors, 0)
 	for n := range data {
-		if err := s.processor.process(v.Index(l), data[n:]); err != nil {
+		if err := s.processor.process(v.Index(l-1), data[n:]); err != nil {
 			errs = append(errs, err)
 		} else if l < len(data) {
 			l++
-			v.SetLen(l + 1)
+			v.SetLen(l)
 		}
 	}
 	if len(errs) > 0 {
