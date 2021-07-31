@@ -9,10 +9,12 @@ request into a struct
 
 ```go
 var (
-	ErrNeedPointer    = errors.New("need pointer to type")
-	ErrNeedStruct     = errors.New("need struct type")
-	ErrNotInRange     = errors.New("value not in valid range")
-	ErrInvalidBoolean = errors.New("invalid boolean")
+	ErrNeedPointer     = errors.New("need pointer to type")
+	ErrNeedStruct      = errors.New("need struct type")
+	ErrNotInRange      = errors.New("value not in valid range")
+	ErrInvalidBoolean  = errors.New("invalid boolean")
+	ErrRequiredMissing = errors.New("required field is missing")
+	ErrNoMatch         = errors.New("string did not match regex")
 )
 ```
 Errors
@@ -30,8 +32,10 @@ an alternate name, for example, in the following struct, the int is parse with
 key 'A' and the bool is parsed with key 'C'.
 
 type Example struct {
+
     A int
     B bool `form:"C"`
+
 }
 
 Two options can be added to the form tag to modify the processing. The 'post'
@@ -40,51 +44,28 @@ Request, and the 'required' option will have an error thrown if the key in not
 set.
 
 Number types can also have minimums and maximums checked during processing by
-setting the min and max tags accordingly.
+setting the 'min' and 'max' tags accordingly.
+
+In a similar vein, string types can utilise the 'regex' tag to set a regular
+expression to be matched against.
 
 Lastly, a custom data processor can be specified by attaching a method to the
 field type with the following specification:
 
 ParseForm([]string) error
 
-#### type ErrProcessingFailed
+#### type ErrorMap
 
 ```go
-type ErrProcessingFailed struct {
-	Key string
-	Err error
-}
+type ErrorMap map[string]error
 ```
 
-ErrProcessingFailed is an error describing a failed data processing
+ErrorMap is a map of all of the keys that experienced errors
 
-#### func (ErrProcessingFailed) Error
-
-```go
-func (e ErrProcessingFailed) Error() string
-```
-Error implements the error interface
-
-#### func (ErrProcessingFailed) Unwrap
+#### func (ErrorMap) Error
 
 ```go
-func (e ErrProcessingFailed) Unwrap() error
-```
-Unwrap retrieves the underlying error
-
-#### type ErrRequiredMissing
-
-```go
-type ErrRequiredMissing string
-```
-
-ErrRequiredMissing is an error returned when a required form value is not
-specified
-
-#### func (ErrRequiredMissing) Error
-
-```go
-func (ErrRequiredMissing) Error() string
+func (ErrorMap) Error() string
 ```
 Error implements the error interface
 
@@ -94,7 +75,7 @@ Error implements the error interface
 type Errors []error
 ```
 
-Errors is a list of all form processing errors
+Errors is a list of errors that occured when processing a slice of processors
 
 #### func (Errors) Error
 
