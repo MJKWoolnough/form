@@ -747,6 +747,18 @@ func TestProcess(t *testing.T) {
 				"A": ErrNoMatch,
 			},
 		},
+		{ // 25
+			url.Values{
+				"A": []string{"HELLO, WORLD"},
+			},
+			url.Values{},
+			struct {
+				A []string
+			}{
+				A: []string{"HELLO, WORLD"},
+			},
+			nil,
+		},
 	} {
 		r := http.Request{
 			Method: http.MethodPost,
