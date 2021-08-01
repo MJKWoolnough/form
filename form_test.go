@@ -777,7 +777,7 @@ func TestProcess(t *testing.T) {
 			},
 			nil,
 		},
-		{ // 25
+		{ // 26
 			url.Values{
 				"A": []string{"HELLO, WORLD", "Beep, Beep"},
 			},
@@ -791,6 +791,26 @@ func TestProcess(t *testing.T) {
 				},
 			},
 			nil,
+		},
+		{ // 26
+			url.Values{
+				"A": []string{"HELLO, WORLD", "Beep, Beep"},
+			},
+			url.Values{},
+			struct {
+				A []string `regex:"Beep"`
+			}{
+				A: []string{
+					"",
+					"Beep, Beep",
+				},
+			},
+			ErrorMap{
+				"A": Errors{
+					ErrNoMatch,
+					nil,
+				},
+			},
 		},
 	} {
 		r := http.Request{
