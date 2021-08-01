@@ -439,7 +439,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{ // 29
+		{ // 30
 			Input: reflect.TypeOf(struct {
 				X
 				A bool
