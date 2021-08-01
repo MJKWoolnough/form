@@ -204,7 +204,11 @@ type slice struct {
 }
 
 func (s slice) process(v reflect.Value, data []string) error {
-	v.Set(reflect.MakeSlice(s.typ, len(data), len(data)))
+	if v.Cap() >= len(data) {
+		v.SetLen(len(data))
+	} else {
+		v.Set(reflect.MakeSlice(s.typ, len(data), len(data)))
+	}
 	var errs Errors
 	for n := range data {
 		if err := s.processor.process(v.Index(n), data[n:]); err != nil {
