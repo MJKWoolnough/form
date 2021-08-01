@@ -11,6 +11,16 @@ import (
 	"testing"
 )
 
+type Z struct {
+	C int
+	Y
+}
+
+type Y struct {
+	X
+	B bool
+}
+
 type X struct {
 	A string
 }
@@ -811,6 +821,28 @@ func TestProcess(t *testing.T) {
 					nil,
 				},
 			},
+		},
+		{ // 27
+			url.Values{
+				"A": []string{"123"},
+				"B": []string{"Y"},
+				"C": []string{"10"},
+			},
+			url.Values{},
+			struct {
+				Z
+			}{
+				Z: Z{
+					C: 10,
+					Y: Y{
+						X: X{
+							A: "123",
+						},
+						B: true,
+					},
+				},
+			},
+			nil,
 		},
 	} {
 		r := http.Request{
