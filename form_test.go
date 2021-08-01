@@ -430,6 +430,24 @@ func TestCreateTypeMap(t *testing.T) {
 		},
 		{ // 29
 			Input: reflect.TypeOf(struct {
+				A []int `min:"10"`
+			}{}),
+			Output: typeMap{
+				"A": {
+					processor: slice{
+						processor: inum{
+							min:  10,
+							max:  math.MaxInt64,
+							bits: 64,
+						},
+						typ: reflect.TypeOf([]int{}),
+					},
+					Index: []int{0},
+				},
+			},
+		},
+		{ // 30
+			Input: reflect.TypeOf(struct {
 				X
 			}{}),
 			Output: typeMap{
@@ -439,7 +457,7 @@ func TestCreateTypeMap(t *testing.T) {
 				},
 			},
 		},
-		{ // 30
+		{ // 31
 			Input: reflect.TypeOf(struct {
 				X
 				A bool
