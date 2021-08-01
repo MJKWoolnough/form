@@ -49,6 +49,15 @@ setting the 'min' and 'max' tags accordingly.
 In a similar vein, string types can utilise the 'regex' tag to set a regular
 expression to be matched against.
 
+Anonymous structs are traversed, but will not override more local fields.
+
+Slices of basic types can be processed, and errors returned from any such
+processing will be of the Errors type, which each indexed entry corresponding to
+the index of the processed data.
+
+Pointers to basic types can also be processed, with the type being allocated
+even if an error occurs.
+
 Lastly, a custom data processor can be specified by attaching a method to the
 field type with the following specification:
 
