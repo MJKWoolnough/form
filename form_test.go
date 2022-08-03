@@ -1,7 +1,7 @@
 package form
 
 import (
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"net/url"
@@ -853,7 +853,7 @@ func TestProcess(t *testing.T) {
 			Header: http.Header{
 				"Content-Type": []string{"application/x-www-form-urlencoded"},
 			},
-			Body: ioutil.NopCloser(strings.NewReader(test.Post.Encode())),
+			Body: io.NopCloser(strings.NewReader(test.Post.Encode())),
 		}
 		output := reflect.New(reflect.TypeOf(test.Output))
 		err := Process(&r, output.Interface())
