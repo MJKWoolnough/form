@@ -22,18 +22,19 @@ func newInum(tags reflect.StructTag, bits int) inum {
 		max:  math.MaxInt64,
 		bits: bits,
 	}
+
 	if m := tags.Get("min"); m != "" {
-		im, err := strconv.ParseInt(m, 10, bits)
-		if err == nil {
+		if im, err := strconv.ParseInt(m, 10, bits); err == nil {
 			i.min = im
 		}
 	}
+
 	if m := tags.Get("max"); m != "" {
-		im, err := strconv.ParseInt(m, 10, bits)
-		if err == nil {
+		if im, err := strconv.ParseInt(m, 10, bits); err == nil {
 			i.max = im
 		}
 	}
+
 	return i
 }
 
@@ -42,10 +43,13 @@ func (i inum) process(v reflect.Value, data []string) error {
 	if err != nil {
 		return err
 	}
+
 	if num < i.min || num > i.max {
 		return ErrNotInRange
 	}
+
 	v.SetInt(num)
+
 	return nil
 }
 
@@ -59,18 +63,19 @@ func newUnum(tags reflect.StructTag, bits int) unum {
 		max:  math.MaxUint64,
 		bits: bits,
 	}
+
 	if m := tags.Get("min"); m != "" {
-		um, err := strconv.ParseUint(m, 10, bits)
-		if err == nil {
+		if um, err := strconv.ParseUint(m, 10, bits); err == nil {
 			u.min = um
 		}
 	}
+
 	if m := tags.Get("max"); m != "" {
-		um, err := strconv.ParseUint(m, 10, bits)
-		if err == nil {
+		if um, err := strconv.ParseUint(m, 10, bits); err == nil {
 			u.max = um
 		}
 	}
+
 	return u
 }
 
@@ -79,10 +84,13 @@ func (u unum) process(v reflect.Value, data []string) error {
 	if err != nil {
 		return err
 	}
+
 	if num < u.min || num > u.max {
 		return ErrNotInRange
 	}
+
 	v.SetUint(num)
+
 	return nil
 }
 
@@ -97,18 +105,19 @@ func newFloat(tags reflect.StructTag, bits int) float {
 		max:  math.MaxFloat64,
 		bits: bits,
 	}
+
 	if m := tags.Get("min"); m != "" {
-		um, err := strconv.ParseFloat(m, bits)
-		if err == nil {
+		if um, err := strconv.ParseFloat(m, bits); err == nil {
 			f.min = um
 		}
 	}
+
 	if m := tags.Get("max"); m != "" {
-		um, err := strconv.ParseFloat(m, bits)
-		if err == nil {
+		if um, err := strconv.ParseFloat(m, bits); err == nil {
 			f.max = um
 		}
 	}
+
 	return f
 }
 
@@ -117,10 +126,13 @@ func (f float) process(v reflect.Value, data []string) error {
 	if err != nil {
 		return err
 	}
+
 	if num < f.min || num > f.max {
 		return ErrNotInRange
 	}
+
 	v.SetFloat(num)
+
 	return nil
 }
 
@@ -136,16 +148,17 @@ func newString(tags reflect.StructTag) str {
 			}
 		}
 	}
+
 	return str{}
 }
 
 func (s str) process(v reflect.Value, data []string) error {
-	if s.regex != nil {
-		if !s.regex.MatchString(data[0]) {
-			return ErrNoMatch
-		}
+	if s.regex != nil && !s.regex.MatchString(data[0]) {
+		return ErrNoMatch
 	}
+
 	v.SetString(data[0])
+
 	return nil
 }
 
@@ -155,11 +168,13 @@ func matchString(a string, b []byte) bool {
 	if len(a) != len(b) {
 		return false
 	}
+
 	for n, c := range b {
 		if a[n]|32 != c {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -186,15 +201,19 @@ func (boolean) process(v reflect.Value, data []string) error {
 	for _, b := range trues {
 		if matchString(data[0], b) {
 			v.SetBool(true)
+
 			return nil
 		}
 	}
+
 	for _, b := range falses {
 		if matchString(data[0], b) {
 			v.SetBool(false)
+
 			return nil
 		}
 	}
+
 	return ErrInvalidBoolean
 }
 
@@ -209,18 +228,23 @@ func (s slice) process(v reflect.Value, data []string) error {
 	} else {
 		v.Set(reflect.MakeSlice(s.typ, len(data), len(data)))
 	}
+
 	var errs Errors
+
 	for n := range data {
 		if err := s.processor.process(v.Index(n), data[n:]); err != nil {
 			if errs == nil {
 				errs = make(Errors, len(data))
 			}
+
 			errs[n] = err
 		}
 	}
+
 	if len(errs) > 0 {
 		return errs
 	}
+
 	return nil
 }
 
@@ -231,10 +255,13 @@ type pointer struct {
 
 func (p pointer) process(v reflect.Value, data []string) error {
 	pv := reflect.New(p.typ)
+
 	if err := p.processor.process(pv.Elem(), data); err != nil {
 		return err
 	}
+
 	v.Set(pv)
+
 	return nil
 }
 
@@ -248,5 +275,6 @@ func (i inter) process(v reflect.Value, data []string) error {
 	if i {
 		v = v.Addr()
 	}
+
 	return v.Interface().(formParser).ParseForm(data)
 }

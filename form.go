@@ -1,5 +1,5 @@
 // Package form provides an easy to use way to parse form values from an HTTP
-// request into a struct
+// request into a struct.
 package form // import "vimagination.zapto.org/form"
 
 import (
@@ -28,12 +28,15 @@ func getTypeMap(t reflect.Type) typeMap {
 	tmMu.RLock()
 	tm, ok := typeMaps[t]
 	tmMu.RUnlock()
+
 	if ok {
 		return tm
 	}
+
 	tmMu.Lock()
 	tm = createTypeMap(t)
 	tmMu.Unlock()
+
 	return tm
 }
 
@@ -50,6 +53,7 @@ func basicTypeProcessor(t reflect.Type, tag reflect.StructTag) processor {
 	case reflect.Bool:
 		return boolean{}
 	}
+
 	return nil
 }
 
@@ -58,22 +62,27 @@ func createTypeMap(t reflect.Type) typeMap {
 	if ok {
 		return tm
 	}
+
 	tm = make(typeMap)
+
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
 		if f.PkgPath != "" {
 			continue
 		}
+
 		name := f.Name
+
 		var required, post bool
+
 		if n := f.Tag.Get("form"); n == "-" {
 			continue
 		} else if n != "" {
-			p := strings.IndexByte(n, ',')
-			if p >= 0 {
+			if p := strings.IndexByte(n, ','); p >= 0 {
 				if p > 0 {
 					name = n[:p]
 				}
+
 				rest := n[p:]
 				required = strings.Contains(rest, ",required,") || strings.HasSuffix(rest, ",required")
 				post = strings.Contains(rest, ",post,") || strings.HasSuffix(rest, ",post")
@@ -81,17 +90,21 @@ func createTypeMap(t reflect.Type) typeMap {
 				name = n
 			}
 		}
+
 		var p processor
+
 		if f.Type.Implements(interType) {
 			p = inter(false)
 		} else if reflect.PtrTo(f.Type).Implements(interType) {
 			p = inter(true)
 		} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
 			et := f.Type.Elem()
+
 			s := basicTypeProcessor(et, f.Tag)
 			if s == nil {
 				continue
 			}
+
 			if k == reflect.Slice {
 				p = slice{
 					processor: s,
@@ -114,13 +127,14 @@ func createTypeMap(t reflect.Type) typeMap {
 					}
 				}
 			}
+
 			continue
 		} else {
-			p = basicTypeProcessor(f.Type, f.Tag)
-			if p == nil {
+			if p = basicTypeProcessor(f.Type, f.Tag); p == nil {
 				continue
 			}
 		}
+
 		tm[name] = processorDetails{
 			processor: p,
 			Required:  required,
@@ -128,7 +142,9 @@ func createTypeMap(t reflect.Type) typeMap {
 			Index:     []int{i},
 		}
 	}
+
 	typeMaps[t] = tm
+
 	return tm
 }
 
@@ -145,7 +161,7 @@ func createTypeMap(t reflect.Type) typeMap {
 // }
 //
 // Two options can be added to the form tag to modify the processing. The
-// 'post' option forces the processer to parse a value from the PostForm field
+// 'post' option forces the processor to parse a value from the PostForm field
 // of the Request, and the 'required' option will have an error thrown if the
 // key in not set.
 //
@@ -167,49 +183,61 @@ func createTypeMap(t reflect.Type) typeMap {
 // Lastly, a custom data processor can be specified by attaching a method to
 // the field type with the following specification:
 //
-// ParseForm([]string) error
+// ParseForm([]string) error.
 func Process(r *http.Request, fv interface{}) error {
 	v := reflect.ValueOf(fv)
 	if v.Kind() != reflect.Ptr {
 		return ErrNeedPointer
 	}
+
 	for v.Kind() == reflect.Ptr {
 		v = v.Elem()
 	}
+
 	if v.Kind() != reflect.Struct {
 		return ErrNeedStruct
 	}
+
 	tm := getTypeMap(v.Type())
+
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
+
 	var errors ErrorMap
+
 	for key, pd := range tm {
 		var (
 			val []string
 			ok  bool
 		)
+
 		if pd.Post {
 			val, ok = r.PostForm[key]
 		} else {
 			val, ok = r.Form[key]
 		}
+
 		if ok {
 			if err := pd.processor.process(v.FieldByIndex(pd.Index), val); err != nil {
 				if errors == nil {
 					errors = make(ErrorMap)
 				}
+
 				errors[key] = err
 			}
 		} else if pd.Required {
 			if errors == nil {
 				errors = make(ErrorMap)
 			}
+
 			errors[key] = ErrRequiredMissing
 		}
 	}
+
 	if len(errors) > 0 {
 		return errors
 	}
+
 	return nil
 }
