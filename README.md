@@ -3,7 +3,7 @@
     import "vimagination.zapto.org/form"
 
 Package form provides an easy to use way to parse form values from an HTTP
-request into a struct
+request into a struct.
 
 ## Usage
 
@@ -17,7 +17,7 @@ var (
 	ErrNoMatch         = errors.New("string did not match regex")
 )
 ```
-Errors
+Errors.
 
 #### func  Process
 
@@ -39,7 +39,7 @@ type Example struct {
 }
 
 Two options can be added to the form tag to modify the processing. The 'post'
-option forces the processer to parse a value from the PostForm field of the
+option forces the processor to parse a value from the PostForm field of the
 Request, and the 'required' option will have an error thrown if the key in not
 set.
 
@@ -61,7 +61,7 @@ even if an error occurs.
 Lastly, a custom data processor can be specified by attaching a method to the
 field type with the following specification:
 
-ParseForm([]string) error
+ParseForm([]string) error.
 
 #### type ErrorMap
 
@@ -69,14 +69,14 @@ ParseForm([]string) error
 type ErrorMap map[string]error
 ```
 
-ErrorMap is a map of all of the keys that experienced errors
+ErrorMap is a map of all of the keys that experienced errors.
 
 #### func (ErrorMap) Error
 
 ```go
 func (ErrorMap) Error() string
 ```
-Error implements the error interface
+Error implements the error interface.
 
 #### type Errors
 
@@ -84,11 +84,11 @@ Error implements the error interface
 type Errors []error
 ```
 
-Errors is a list of errors that occured when processing a slice of processors
+Errors is a list of errors that occurred when processing a slice of processors.
 
 #### func (Errors) Error
 
 ```go
 func (Errors) Error() string
 ```
-Error implements the error interface
+Error implements the error interface.
