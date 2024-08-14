@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-// Errors is a list of errors that occured when processing a slice of processors.
+// Errors is a list of errors that occurred when processing a slice of processors.
 type Errors []error
 
 // Error implements the error interface.
