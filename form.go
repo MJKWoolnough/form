@@ -26,16 +26,13 @@ var (
 
 func getTypeMap(t reflect.Type) typeMap {
 	tmMu.RLock()
+	defer tmMu.RUnlock()
+
 	tm, ok := typeMaps[t]
-	tmMu.RUnlock()
 
-	if ok {
-		return tm
+	if !ok {
+		tm = createTypeMap(t)
 	}
-
-	tmMu.Lock()
-	tm = createTypeMap(t)
-	tmMu.Unlock()
 
 	return tm
 }
