@@ -92,7 +92,7 @@ func createTypeMap(t reflect.Type) typeMap {
 
 		if f.Type.Implements(interType) {
 			p = inter(false)
-		} else if reflect.PtrTo(f.Type).Implements(interType) {
+		} else if reflect.PointerTo(f.Type).Implements(interType) {
 			p = inter(true)
 		} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
 			et := f.Type.Elem()
@@ -152,10 +152,10 @@ func createTypeMap(t reflect.Type) typeMap {
 // with an alternate name, for example, in the following struct, the int is
 // parse with key 'A' and the bool is parsed with key 'C'.
 //
-// type Example struct {
-//	A int
-//	B bool `form:"C"`
-// }
+//	type Example struct {
+//		A int
+//		B bool `form:"C"`
+//	}
 //
 // Two options can be added to the form tag to modify the processing. The
 // 'post' option forces the processor to parse a value from the PostForm field
