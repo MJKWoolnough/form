@@ -31,12 +31,10 @@ Form keys are assumed to be the field names unless a 'form' tag is provided with
 an alternate name, for example, in the following struct, the int is parse with
 key 'A' and the bool is parsed with key 'C'.
 
-type Example struct {
-
-    A int
-    B bool `form:"C"`
-
-}
+    type Example struct {
+    	A int
+    	B bool `form:"C"`
+    }
 
 Two options can be added to the form tag to modify the processing. The 'post'
 option forces the processor to parse a value from the PostForm field of the
