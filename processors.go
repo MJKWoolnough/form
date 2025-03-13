@@ -178,43 +178,143 @@ func matchString(a string, b []byte) bool {
 	return true
 }
 
-var (
-	trues = [...][]byte{
-		{'1'},
-		{'y'},
-		{'t'},
-		{'o', 'n'},
-		{'y', 'e', 's'},
-		{'t', 'r', 'u', 'e'},
-	}
-	falses = [...][]byte{
-		{'0'},
-		{'n'},
-		{'g'},
-		{'o', 'f', 'f'},
-		{'n', 'o'},
-		{'f', 'a', 'l', 's', 'e'},
-	}
+type boolChars [256]uint8
+
+type boolResult uint8
+
+const (
+	resultNone boolResult = iota
+	resultTrue
+	resultFalse
 )
 
+type boolState struct {
+	boolChars
+	result boolResult
+}
+
+var bools = [...]boolState{
+	{},
+	{ // 1
+		boolChars: boolChars{
+			'0': 2,
+			'1', 3,
+			'F': 4,
+			'f': 4,
+			'N': 8,
+			'n': 8,
+			'O': 9,
+			'o': 9,
+			'T': 11,
+			't': 11,
+			'Y': 14,
+			'y': 14,
+		},
+	},
+	{ // 2: '0', 'false', 'off'
+		result: resultFalse,
+	},
+	{ // 3: '1', 'on', 'true', 'yes'
+		result: resultTrue,
+	},
+	{ // 4: 'f',
+		boolChars: boolChars{
+			'A': 5,
+			'a': 5,
+		},
+		result: resultFalse,
+	},
+	{ // 5: 'fa',
+		boolChars: boolChars{
+			'L': 6,
+			'l': 6,
+		},
+	},
+	{ // 6: 'fal',
+		boolChars: boolChars{
+			'S': 7,
+			's': 7,
+		},
+	},
+	{ // 7: 'fals',
+		boolChars: boolChars{
+			'E': 2,
+			'e': 2,
+		},
+	},
+	{ // 8: 'n',
+		boolChars: boolChars{
+			'O': 2,
+			'o': 2,
+		},
+		result: resultFalse,
+	},
+	{ // 9: 'o',
+		boolChars: boolChars{
+			'F': 10,
+			'f': 10,
+			'N': 3,
+			'n': 3,
+		},
+	},
+	{ // 10: 'of',
+		boolChars: boolChars{
+			'F': 2,
+			'f': 2,
+		},
+	},
+	{ // 11: 't',
+		boolChars: boolChars{
+			'R': 12,
+			'r': 12,
+		},
+		result: resultTrue,
+	},
+	{ // 12: 'tr',
+		boolChars: boolChars{
+			'U': 13,
+			'u': 13,
+		},
+	},
+	{ // 13: 'tru',
+		boolChars: boolChars{
+			'E': 3,
+			'e': 3,
+		},
+	},
+	{ // 14: 'y',
+		boolChars: boolChars{
+			'E': 15,
+			'e': 15,
+		},
+		result: resultTrue,
+	},
+	{ // 15: 'ye',
+		boolChars: boolChars{
+			'S': 3,
+			's': 3,
+		},
+	},
+}
+
 func (boolean) process(v reflect.Value, data []string) error {
-	for _, b := range trues {
-		if matchString(data[0], b) {
-			v.SetBool(true)
+	pos := uint8(1)
 
-			return nil
+	for n := range data[0] {
+		if pos = bools[pos].boolChars[data[0][n]]; pos == 0 {
+			break
 		}
 	}
 
-	for _, b := range falses {
-		if matchString(data[0], b) {
-			v.SetBool(false)
+	result := bools[pos].result
 
-			return nil
-		}
+	if result == resultNone {
+		return ErrInvalidBoolean
 	}
 
-	return ErrInvalidBoolean
+	v.SetBool(result == resultTrue)
+
+	return nil
 }
 
 type slice struct {
