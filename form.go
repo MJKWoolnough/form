@@ -68,68 +68,14 @@ func createTypeMap(t reflect.Type) typeMap {
 			continue
 		}
 
-		name := f.Name
-
-		var required, post bool
-
-		if n := f.Tag.Get("form"); n == "-" {
+		name, required, post, ignore := parseTag(f.Name, f.Tag.Get("form"))
+		if ignore {
 			continue
-		} else if n != "" {
-			if p := strings.IndexByte(n, ','); p >= 0 {
-				if p > 0 {
-					name = n[:p]
-				}
-
-				rest := n[p:]
-				required = strings.Contains(rest, ",required,") || strings.HasSuffix(rest, ",required")
-				post = strings.Contains(rest, ",post,") || strings.HasSuffix(rest, ",post")
-			} else {
-				name = n
-			}
 		}
 
-		var p processor
-
-		if f.Type.Implements(interType) {
-			p = inter(false)
-		} else if reflect.PointerTo(f.Type).Implements(interType) {
-			p = inter(true)
-		} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
-			et := f.Type.Elem()
-
-			s := basicTypeProcessor(et, f.Tag)
-			if s == nil {
-				continue
-			}
-
-			if k == reflect.Slice {
-				p = slice{
-					processor: s,
-					typ:       reflect.SliceOf(et),
-				}
-			} else {
-				p = pointer{
-					processor: s,
-					typ:       et,
-				}
-			}
-		} else if k == reflect.Struct && f.Anonymous {
-			for n, p := range createTypeMap(f.Type) {
-				if _, ok := tm[n]; !ok {
-					tm[n] = processorDetails{
-						processor: p.processor,
-						Required:  p.Required,
-						Post:      p.Post,
-						Index:     append(append(make([]int, 0, len(p.Index)+1), i), p.Index...),
-					}
-				}
-			}
-
+		p := createProcessor(f, tm, i)
+		if p == nil {
 			continue
-		} else {
-			if p = basicTypeProcessor(f.Type, f.Tag); p == nil {
-				continue
-			}
 		}
 
 		tm[name] = processorDetails{
@@ -143,6 +89,78 @@ func createTypeMap(t reflect.Type) typeMap {
 	typeMaps[t] = tm
 
 	return tm
+}
+
+func parseTag(name, tag string) (string, bool, bool, bool) {
+	var required, post bool
+
+	if tag == "-" {
+		return "", false, false, true
+	} else if tag != "" {
+		if p := strings.IndexByte(tag, ','); p >= 0 {
+			if p > 0 {
+				name = tag[:p]
+			}
+
+			rest := tag[p:]
+			required = strings.Contains(rest, ",required,") || strings.HasSuffix(rest, ",required")
+			post = strings.Contains(rest, ",post,") || strings.HasSuffix(rest, ",post")
+		} else {
+			name = tag
+		}
+	}
+
+	return name, required, post, false
+}
+
+func createProcessor(f reflect.StructField, tm typeMap, i int) processor {
+	if f.Type.Implements(interType) {
+		return inter(false)
+	} else if reflect.PointerTo(f.Type).Implements(interType) {
+		return inter(true)
+	} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
+		return createSlicePtrProcessor(f, k)
+	} else if k == reflect.Struct && f.Anonymous {
+		return createMapProcessor(f, tm, i)
+	}
+
+	return basicTypeProcessor(f.Type, f.Tag)
+}
+
+func createSlicePtrProcessor(f reflect.StructField, k reflect.Kind) processor {
+	et := f.Type.Elem()
+
+	s := basicTypeProcessor(et, f.Tag)
+	if s == nil {
+		return nil
+	}
+
+	if k == reflect.Slice {
+		return slice{
+			processor: s,
+			typ:       reflect.SliceOf(et),
+		}
+	}
+
+	return pointer{
+		processor: s,
+		typ:       et,
+	}
+}
+
+func createMapProcessor(f reflect.StructField, tm typeMap, i int) processor {
+	for n, p := range createTypeMap(f.Type) {
+		if _, ok := tm[n]; !ok {
+			tm[n] = processorDetails{
+				processor: p.processor,
+				Required:  p.Required,
+				Post:      p.Post,
+				Index:     append(append(make([]int, 0, len(p.Index)+1), i), p.Index...),
+			}
+		}
+	}
+
+	return nil
 }
 
 // Process parses the form data from the request into the passed value, which
@@ -201,6 +219,10 @@ func Process(r *http.Request, fv interface{}) error {
 		return err
 	}
 
+	return processForm(r, v, tm)
+}
+
+func processForm(r *http.Request, v reflect.Value, tm typeMap) error {
 	var errors ErrorMap
 
 	for key, pd := range tm {
