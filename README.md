@@ -13,7 +13,7 @@ Package form provides an easy to use way to parse form values from an HTTP reque
 
  - Parse form values directly into Go structs.
  - Use struct tags to define limitations and requirements for the field.
- - Supports nested and anonymouse structs, slices, and pointers.
+ - Supports nested and anonymous structs, slices, and pointers.
  - Processors for all basic types and allows custom processing by including a `ParseForm([]string) error` method on a type.
 
 ## Usage
