@@ -490,7 +490,7 @@ func TestCreateTypeMap(t *testing.T) {
 func TestProcess(t *testing.T) {
 	for n, test := range [...]struct {
 		Get, Post url.Values
-		Output    interface{}
+		Output    any
 		Err       error
 	}{
 		{ // 1
