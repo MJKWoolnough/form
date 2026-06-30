@@ -118,7 +118,7 @@ func createProcessor(f reflect.StructField, tm typeMap, i int) processor {
 		return inter(false)
 	} else if reflect.PointerTo(f.Type).Implements(interType) {
 		return inter(true)
-	} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Ptr {
+	} else if k := f.Type.Kind(); k == reflect.Slice || k == reflect.Pointer {
 		return createSlicePtrProcessor(f, k)
 	} else if k == reflect.Struct && f.Anonymous {
 		return createMapProcessor(f, tm, i)
@@ -199,13 +199,13 @@ func createMapProcessor(f reflect.StructField, tm typeMap, i int) processor {
 // the field type with the following specification:
 //
 // ParseForm([]string) error.
-func Process(r *http.Request, fv interface{}) error {
+func Process(r *http.Request, fv any) error {
 	v := reflect.ValueOf(fv)
-	if v.Kind() != reflect.Ptr {
+	if v.Kind() != reflect.Pointer {
 		return ErrNeedPointer
 	}
 
-	for v.Kind() == reflect.Ptr {
+	for v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 
