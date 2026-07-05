@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/MJKWoolnough/form/actions/workflows/go-checks.yml/badge.svg)](https://github.com/MJKWoolnough/form/actions)
 [![Go Reference](https://pkg.go.dev/badge/vimagination.zapto.org/form.svg)](https://pkg.go.dev/vimagination.zapto.org/form)
-[![Go Report Card](https://goreportcard.com/badge/vimagination.zapto.org/form)](https://goreportcard.com/report/vimagination.zapto.org/form)
 
 --
     import "vimagination.zapto.org/form"
